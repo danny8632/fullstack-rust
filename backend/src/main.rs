@@ -1,8 +1,8 @@
-use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, App, HttpResponse, HttpServer, Responder, middleware};
 use common::TestStruct;
 
 
-#[get("/")]
+#[get("/test")]
 async fn test() -> impl Responder {
     let test = TestStruct {
         name: String::from("hej")
@@ -20,6 +20,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
+            .wrap(middleware::DefaultHeaders::new().add(("Access-Control-Allow-Origin", "http://localhost:8082")))
             .service(test)
     })
     .bind(("127.0.0.1", actix_port))?

@@ -1,5 +1,8 @@
 use yew_router::prelude::*;
 use yew::prelude::*;
+use gloo_net::http::Request;
+
+use common::TestStruct;
 
 mod components;
 
@@ -32,9 +35,32 @@ fn secure() -> Html {
 
 #[function_component(Home)]
 fn home() -> Html {
+    let test: UseStateHandle<Option<TestStruct>> = use_state(|| None);
+    {
+        let test = test.clone();
+        use_effect_with_deps(move |_| {
+            let test = test.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let fetched_test: TestStruct = Request::get("http://localhost:8081/test")
+                    .send()
+                    .await
+                    .unwrap()
+                    .json()
+                    .await
+                    .unwrap();
+                test.set(Some(fetched_test))
+            });
+            || ()
+        }, ());
+    }
+
     html! {
         <div>
-            <h1>{ "Home!!!!" }</h1>
+            if let Some(x) = &*test {
+                <b>{"test"}</b>
+                { &x.name }
+            }
+            <h1>{ "Home!!" }</h1>
         </div>
     }
 }
