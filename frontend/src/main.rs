@@ -30,9 +30,18 @@ fn secure() -> Html {
     }
 }
 
+#[function_component(Home)]
+fn home() -> Html {
+    html! {
+        <div>
+            <h1>{ "Home!!!!" }</h1>
+        </div>
+    }
+}
+
 fn switch(routes: &Route) -> Html {
     match routes {
-        Route::Home => html! { <h1>{ "Home!!!" }</h1> },
+        Route::Home => html! { <Home />  },
         Route::Secure => html! { <Secure /> },
         Route::NotFound => html! { <h1>{ "404" }</h1> },
     }

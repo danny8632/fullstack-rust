@@ -1,19 +1,14 @@
-use std::str::FromStr;
+use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+use common::TestStruct;
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 #[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
+async fn test() -> impl Responder {
+    let test = TestStruct {
+        name: String::from("hej")
+    };
 
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
+    HttpResponse::Ok().json(test)
 }
 
 #[actix_web::main]
@@ -25,9 +20,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
-            .service(hello)
-            .service(echo)
-            .route("/hey", web::get().to(manual_hello))
+            .service(test)
     })
     .bind(("127.0.0.1", actix_port))?
     .run()
