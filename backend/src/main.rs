@@ -24,7 +24,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .wrap(middleware::DefaultHeaders::new().add(("Access-Control-Allow-Origin", "http://localhost:8082")))
+            .wrap(middleware::DefaultHeaders::new().add(("Access-Control-Allow-Origin", "http://localhost:80")))
             // .service(test)
     })
     .bind(("127.0.0.1", actix_port))?
