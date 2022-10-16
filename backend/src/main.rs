@@ -1,7 +1,13 @@
-use actix_web::{web, App, HttpServer, middleware};
+use actix_web::{web, App, get, HttpResponse, Responder, HttpServer, middleware};
 use sqlx::postgres::PgPoolOptions;
+use api::config;
 
+mod api;
 
+#[get("/")]
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -11,7 +17,7 @@ async fn main() -> std::io::Result<()> {
         .unwrap();
 
     let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or(String::from("postgres://api:api123456@localhost/my_api"))
+        .unwrap_or(String::from("postgres://api:api123456@127.0.0.1/my_api"))
         .parse::<String>()
         .unwrap();
 
@@ -24,8 +30,9 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .wrap(middleware::DefaultHeaders::new().add(("Access-Control-Allow-Origin", "http://localhost:80")))
-            // .service(test)
+            .wrap(middleware::DefaultHeaders::new().add(("Access-Control-Allow-Origin", "*")))
+            .configure(config)
+            .service(hello)
     })
     .bind(("127.0.0.1", actix_port))?
     .run()

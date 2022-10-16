@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export TRUNK_SERVE_PORT=80
+export TRUNK_SERVE_PORT=8080
 export ACTIX_PORT=8081
 
 children=()
