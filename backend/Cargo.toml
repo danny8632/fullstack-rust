@@ -12,3 +12,6 @@ sqlx = { version = "0.6.2", features = [ "runtime-actix-native-tls", "postgres",
 serde_json = "1.0.86"
 chrono = { version = "0.4.22", features = [ "serde" ] }
 serde = "1.0.145"
+argon2 = "0.4"
+rand_core = { version = "0.6", features = ["std"] }
+jwt = "0.16.0"

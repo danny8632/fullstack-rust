@@ -1,4 +1,4 @@
-use actix_web::{web, post, get, Responder, HttpResponse};
+use actix_web::{web, get, Responder, HttpResponse};
 use sqlx::{query, postgres::PgPool};
 
 use common::Register;
@@ -26,16 +26,7 @@ async fn hello(pool: web::Data<PgPool>) -> impl Responder {
     HttpResponse::Ok().json(res)
 }
 
-#[post("/login")]
-async fn login(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-
-
-
 
 pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(login);
     cfg.service(hello);
 }
