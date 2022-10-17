@@ -8,6 +8,11 @@ use argon2::{
     Argon2
 };
 
+use hmac::{Hmac, Mac};
+use jwt::SignWithKey;
+use sha2::Sha256;
+use std::collections::BTreeMap;
+
 use common::{Register, Login, User};
 
 #[post("/login")]
@@ -32,11 +37,19 @@ async fn login(login: web::Json<Login>, pool: web::Data<PgPool>) -> impl Respond
     };
 
     let parsed_hash = PasswordHash::new(res.password.as_str()).unwrap();
-    if Argon2::default().verify_password(login.clone().password.as_bytes(), &parsed_hash).is_ok() {
-        return HttpResponse::Ok().json(user)
+    if !Argon2::default().verify_password(login.clone().password.as_bytes(), &parsed_hash).is_ok() {
+        return HttpResponse::Ok().json("Wrong login creds")
     }
 
-    HttpResponse::Ok().json("Wrong login creds")
+    // This means that were are now successfully logged in
+    // So now we are going to create the key and the jwt
+    let key: Hmac<Sha256> = Hmac::new_from_slice(b"some-secret").unwrap();
+    let mut claims = BTreeMap::new();
+    claims.insert("user", user);
+
+    let token_str = claims.sign_with_key(&key).unwrap();
+
+    return HttpResponse::Ok().body(token_str)
 }
 
 #[post("/register")]

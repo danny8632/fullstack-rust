@@ -265,10 +265,12 @@ dependencies = [
  "argon2",
  "chrono",
  "common",
+ "hmac",
  "jwt",
  "rand_core",
  "serde",
  "serde_json",
+ "sha2",
  "sqlx",
 ]
 
